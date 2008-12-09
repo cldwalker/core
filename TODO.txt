@@ -1,0 +1,4 @@
+* Import/Upgrade my old tests.
+* Move all core extensions to modules so that they can be optionally extended to an object
+  or included by any class.
+* Provide aliasing for methods to avoid method name clashes.

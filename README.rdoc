@@ -1,0 +1,3 @@
+== Description
+
+My extensions to core ruby libraries, similar to the facets gem.
