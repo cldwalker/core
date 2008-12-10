@@ -1,5 +1,6 @@
-class Hash #:nodoc:
-  #validate_value_klass!
+class Hash
+  # For a hash whose keys are strings of Class names, this will delete any pairs that have
+  # nonexistant class names.
   def validate_value_klass(klass)
     self.each {|sid,obj|
       if obj.class != Object.const_get(klass)
@@ -8,6 +9,9 @@ class Hash #:nodoc:
       end
     }
   end  
+
+  # Returns a hash which will set its values by calling each value with the given method and optional argument.
+  # If a block is passed, each value will be set the value returned by its block call.
   def vmap(arg=nil,method='[]',&block)
     new = {}
     if block
@@ -22,18 +26,24 @@ class Hash #:nodoc:
     end
     new
   end
+  
+  # Same as vmap() but merges its results with the existing hash.
   def vmap!(*args,&block)
     self.update(vmap(*args,&block))
   end
+
+  # For a hash whose values are arrays, this will return a hash with each value substituted by the
+  # size of the value.
   def vsize
     vmap(nil,'size')
   end
-  #only_keep!
+
+  # Same as pass_keys!() but replaces the hash with the resulting hash.
   def only_keep(arr=[],opt={})
     delete_keys!(self.keys - arr,opt)
   end
-  #alias_method :keep_keys
-  def delete_keys!(arr=[],opt={})
+
+  def delete_keys!(arr=[],opt={}) #:nodoc:
     deleted = {}
     arr.each {|e| 
       puts "deleting #{e}" if opt[:verbose]
@@ -41,10 +51,17 @@ class Hash #:nodoc:
     }
     deleted
   end
+  
+  # Returns a subset of the hash for the specified keys. These entries will be deleted from the
+  # original hash.
   def pass_keys!(*keys)
     delete_keys!(keys)
   end
-  #alias_method: hash_subset
+
+  # For a hash whose values are arrays, this will set each unique element in a value array as a key
+  # and set its values to all the keys it occurred in.
+  # This is useful when modeling one to many relationships with keys
+  # and values.
   def transform_many
     b = {}
     each {|k,arr| 
@@ -56,6 +73,8 @@ class Hash #:nodoc:
     }
     b
   end
+
+  #Sorts hash by values, returning them as an array of array pairs.
   def vsort
     sort { |a,b| b[1]<=>a[1] }
   end

@@ -4,8 +4,8 @@ require 'rubygems/specification'
 require 'date'
 require 'spec/rake/spectask'
 
-GEM = "core"
-GEM_VERSION = "0.1.0"
+GEM = "cldwalker-core"
+GEM_VERSION = "10.0.0"
 AUTHOR = "Gabriel Horner"
 EMAIL = "gabriel.horner@gmail.com"
 #HOMEPAGE = "http://example.com"
@@ -28,7 +28,7 @@ spec = Gem::Specification.new do |s|
   
   s.require_path = 'lib'
   s.autorequire = GEM
-  s.files = %w(LICENSE.txt README.txt Rakefile TODO.txt) + Dir.glob("{lib}/**/*")
+  s.files = %w(LICENSE.txt README.rdoc Rakefile TODO.txt) + Dir.glob("{lib}/**/*")
 end
 
 task :default => :spec

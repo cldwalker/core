@@ -1,4 +1,7 @@
 * Import/Upgrade my old tests.
-* Move all core extensions to modules so that they can be optionally extended to an object
-  or included by any class.
-* Provide aliasing for methods to avoid method name clashes.
+* Move all core extensions to modules so that they can be optionally extended by an object
+  or included by a non-core class.
+* Would be nice to:
+** Provide aliasing for methods to avoid method name clashes.
+** Provide a sake-like way for easily sharing/installing your methods with others.
+** Extend this for non-core classes ie some Rails classes.
