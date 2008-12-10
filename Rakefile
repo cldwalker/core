@@ -8,7 +8,7 @@ GEM = "core"
 GEM_VERSION = "0.1.0"
 AUTHOR = "Gabriel Horner"
 EMAIL = "gabriel.horner@gmail.com"
-#HOMEPAGE = "http://example.com"
+HOMEPAGE = "http://github.com/cldwalker/core"
 SUMMARY = "My extensions to core ruby classes, similar to the facets gem."
 
 spec = Gem::Specification.new do |s|
@@ -16,19 +16,19 @@ spec = Gem::Specification.new do |s|
   s.version = GEM_VERSION
   s.platform = Gem::Platform::RUBY
   s.has_rdoc = true
-  s.extra_rdoc_files = ["README.rdoc", "LICENSE.txt", 'TODO.txt']
+  s.extra_rdoc_files = ["README.markdown", "LICENSE.txt", 'TODO.txt']
   s.summary = SUMMARY
   s.description = s.summary
   s.author = AUTHOR
   s.email = EMAIL
-  #s.homepage = HOMEPAGE
+  s.homepage = HOMEPAGE
   
   # Uncomment this to add a dependency
   # s.add_dependency "foo"
   
   s.require_path = 'lib'
   s.autorequire = GEM
-  s.files = %w(LICENSE.txt README.rdoc Rakefile TODO.txt) + Dir.glob("{lib}/**/*")
+  s.files = %w(LICENSE.txt README.markdown Rakefile TODO.txt) + Dir.glob("{lib}/**/*")
 end
 
 task :default => :spec

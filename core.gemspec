@@ -10,9 +10,10 @@ Gem::Specification.new do |s|
   s.date = %q{2008-12-10}
   s.description = %q{My extensions to core ruby classes, similar to the facets gem.}
   s.email = %q{gabriel.horner@gmail.com}
-  s.extra_rdoc_files = ["README.rdoc", "LICENSE.txt", "TODO.txt"]
-  s.files = ["LICENSE.txt", "README.rdoc", "Rakefile", "TODO.txt", "lib/core", "lib/core/array.rb", "lib/core/class.rb", "lib/core/dir.rb", "lib/core/file.rb", "lib/core/hash.rb", "lib/core/io.rb", "lib/core/object.rb", "lib/core/string.rb", "lib/core.rb"]
+  s.extra_rdoc_files = ["README.markdown", "LICENSE.txt", "TODO.txt"]
+  s.files = ["LICENSE.txt", "README.markdown", "Rakefile", "TODO.txt", "lib/core", "lib/core/array.rb", "lib/core/class.rb", "lib/core/dir.rb", "lib/core/file.rb", "lib/core/hash.rb", "lib/core/io.rb", "lib/core/object.rb", "lib/core/string.rb", "lib/core.rb"]
   s.has_rdoc = true
+  s.homepage = %q{http://github.com/cldwalker/core}
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.1}
   s.summary = %q{My extensions to core ruby classes, similar to the facets gem.}
