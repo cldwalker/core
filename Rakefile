@@ -4,12 +4,12 @@ require 'rubygems/specification'
 require 'date'
 require 'spec/rake/spectask'
 
-GEM = "cldwalker-core"
-GEM_VERSION = "10.0.0"
+GEM = "core"
+GEM_VERSION = "0.1.0"
 AUTHOR = "Gabriel Horner"
 EMAIL = "gabriel.horner@gmail.com"
 #HOMEPAGE = "http://example.com"
-SUMMARY = "A gem that provides..."
+SUMMARY = "My extensions to core ruby classes, similar to the facets gem."
 
 spec = Gem::Specification.new do |s|
   s.name = GEM
