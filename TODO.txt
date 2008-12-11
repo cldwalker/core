@@ -2,6 +2,7 @@
 * Move all core extensions to modules so that they can be optionally extended by an object
   or included by a non-core class.
 * Would be nice to:
+** Detect if the included file will overwrite existing methods.
 ** Provide aliasing for methods to avoid method name clashes.
 ** Provide a sake-like way for easily sharing/installing your methods with others.
-** Extend this for non-core classes ie some Rails classes.
+** Extend this system for non-core classes ie some Rails classes.
