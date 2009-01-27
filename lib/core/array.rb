@@ -1,7 +1,9 @@
-class Array 
+module Core
+  module Array
   # Allows you to specify ranges of elements and individual elements with one string, array starts at 1
   # Example: choose first and fourth through eighth elements: '1,4-8'
   def multislice(range,splitter=',',offset=nil)
+    #td: fix swallowing of empty lines
     result = []
     for r in range.split(splitter)
     if r =~ /-/
@@ -99,4 +101,5 @@ class Array
   def exclude_all?(arr)
     ! include_any?(arr)
   end
+end
 end
