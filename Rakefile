@@ -1,57 +1,49 @@
-require 'rubygems'
-require 'rake/gempackagetask'
-require 'rubygems/specification'
-require 'date'
-require 'spec/rake/spectask'
+require 'rake'
+require 'rake/testtask'
+require 'rake/rdoctask'
+begin
+  require 'rcov/rcovtask'
 
-GEM = "core"
-GEM_VERSION = "0.1.0"
-AUTHOR = "Gabriel Horner"
-EMAIL = "gabriel.horner@gmail.com"
-HOMEPAGE = "http://github.com/cldwalker/core"
-SUMMARY = "My extensions to core ruby classes, similar to the facets gem."
-
-spec = Gem::Specification.new do |s|
-  s.name = GEM
-  s.version = GEM_VERSION
-  s.platform = Gem::Platform::RUBY
-  s.has_rdoc = true
-  s.extra_rdoc_files = ["README.markdown", "LICENSE.txt", 'TODO.txt']
-  s.summary = SUMMARY
-  s.description = s.summary
-  s.author = AUTHOR
-  s.email = EMAIL
-  s.homepage = HOMEPAGE
-  
-  # Uncomment this to add a dependency
-  # s.add_dependency "foo"
-  
-  s.require_path = 'lib'
-  s.autorequire = GEM
-  s.files = %w(LICENSE.txt README.markdown Rakefile TODO.txt) + Dir.glob("{lib}/**/*")
-end
-
-task :default => :spec
-
-desc "Run specs"
-Spec::Rake::SpecTask.new do |t|
-  t.spec_files = FileList['spec/**/*_spec.rb']
-  t.spec_opts = %w(-fs --color)
-end
-
-
-Rake::GemPackageTask.new(spec) do |pkg|
-  pkg.gem_spec = spec
-end
-
-desc "install the gem locally"
-task :install => [:package] do
-  sh %{sudo gem install pkg/#{GEM}-#{GEM_VERSION}}
-end
-
-desc "create a gemspec file"
-task :make_spec do
-  File.open("#{GEM}.gemspec", "w") do |file|
-    file.puts spec.to_ruby
+  Rcov::RcovTask.new do |t|
+    t.libs << 'test'
+    t.test_files = FileList['test/**/*_test.rb']
+    t.rcov_opts = ["-T -x '/Library/Ruby/*'"]
+    t.verbose = true
   end
+rescue LoadError
+  puts "Rcov not available. Install it for rcov-related tasks with: sudo gem install rcov"
 end
+
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |s|
+    s.name = "core"
+    s.description = "My extensions to core ruby classes, similar to the facets gem."
+    s.summary = s.description
+    s.email = "gabriel.horner@gmail.com"
+    s.homepage = "http://github.com/cldwalker/core"
+    s.authors = ["Gabriel Horner"]
+    s.files = FileList["VERSION.yml", "Rakefile", "README.markdown", "LICENSE.txt", "{bin,lib}/**/*"]
+    s.has_rdoc = true
+    s.extra_rdoc_files = ["README.markdown", "LICENSE.txt", "TODO.txt"]
+  end
+
+rescue LoadError
+  puts "Jeweler not available. Install it for jeweler-related tasks with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
+end
+
+Rake::TestTask.new do |t|
+  t.libs << 'lib'
+  t.pattern = 'test/**/*_test.rb'
+  t.verbose = false
+end
+
+Rake::RDocTask.new do |rdoc|
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title    = 'test'
+  rdoc.options << '--line-numbers' << '--inline-source'
+  rdoc.rdoc_files.include('README*')
+  rdoc.rdoc_files.include('lib/**/*.rb')
+end
+
+task :default => :test
