@@ -2,14 +2,17 @@ require File.join(File.dirname(__FILE__), 'test_helper')
 
 class Core::LoaderTest < Test::Unit::TestCase
   
-  test "check_instance_methods finds conflicts" do
-    eval "module ::SomeModule; def chomp!; end; end"
-    Core.check_instance_methods(Array, ::SomeModule).should == ['chomp!']
-  end
+  context "Core::Loader" do
+    before(:each) {@loader = Core::Loader.new(Core)}
+    test "check_instance_methods finds conflicts" do
+      eval "module ::SomeModule; def chomp!; end; end"
+      @loader.check_instance_methods(Array, ::SomeModule).should == ['chomp!']
+    end
   
-  test "check_instance_methods finds no conflicts" do
-    eval "module ::AnotherModule; def blah; end; end"
-    Core.check_instance_methods(Array, ::AnotherModule).should == []
+    test "check_instance_methods finds no conflicts" do
+      eval "module ::AnotherModule; def blah; end; end"
+      @loader.check_instance_methods(Array, ::AnotherModule).should == []
+    end
   end
   
   context "adds_to" do
@@ -21,7 +24,7 @@ class Core::LoaderTest < Test::Unit::TestCase
     end
     
     test "auto add requires correct class" do
-      Core.expects(:require).with("core/class")
+      Kernel.expects(:require).with("core/class")
       capture_stdout { Core.adds_to(Class) }
     end
     

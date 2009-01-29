@@ -44,7 +44,7 @@ Your Core
 =========
 If you'd like to wrap your own core extensions in say the original namespace MyCore:
 	
-	MyCore.send :include, Core::Loader
+	MyCore.send :include, Core::Load
 
 You'll then be able to extend classes as in the examples above, replacing Core with MyCore.
 To take advantage of the auto-requiring done by Core::Loader, place your extensions

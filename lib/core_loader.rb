@@ -1,12 +1,21 @@
 module Core
-  module Loader    
+  module Load
     def self.included(base)
-      base.extend(self)
+      base.class_eval %[
+        def self.adds_to(*args)
+          Loader.new(#{base}).adds_to(*args)
+        end
+      ]
+    end
+  end
+  class Loader 
+    def initialize(base_class)
+      @loader_base_class = base_class
     end
     
     def adds_to(klass, options = {})
       unless (extension_klass = options[:with] || get_extension_class(klass))
-        puts "No #{self} extension class found"
+        puts "No #{@loader_base_class} extension class found"
         return
       end
       instance_extension_klass = extension_klass
@@ -41,7 +50,7 @@ module Core
     end
     
     def detect_extension_class(klass)
-      extension_klass = self.const_get(klass.to_s) rescue nil
+      extension_klass = @loader_base_class.const_get(klass.to_s) rescue nil
       extension_klass = nil if extension_klass == klass
       extension_klass
     end
@@ -49,7 +58,7 @@ module Core
     def get_extension_class(klass)
       unless (extension_klass = detect_extension_class(klass))
         #try again but first by requiring possible file
-        begin; require("#{self.to_s.gsub('::','/').downcase}/#{klass.to_s.downcase}"); rescue(LoadError); end
+        begin; Kernel.require("#{@loader_base_class.to_s.gsub('::','/').downcase}/#{klass.to_s.downcase}"); rescue(LoadError); end
         extension_klass = detect_extension_class(klass)
       end
       extension_klass
