@@ -73,7 +73,7 @@ Patches for more thorough checks are welcome.
 Todo
 ====
 
-* Support extending class methods of the extended class.
+* Support extending class methods of the extended class ie for my File, Dir, IO, Object extensions
 * Import/Upgrade my old tests for my extension classes.
 * Provide aliasing for methods to bypass method name clashes.
 * Make it easier to share/install core extensions made by others.
