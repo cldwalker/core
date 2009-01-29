@@ -4,7 +4,7 @@ Description
 My extensions to core and standard ruby 1.8 classes, similar to the facets and activesupport gems.
 Although my extensions are probably nothing new, they are unobtrusive (monkeypatching is up to you)
 and have basic checks for preventing method name collision.
-So if you're not feeling shy, monkeypatch away: 
+So if you're not feeling shy, monkeypatch: 
 
 	irb>> require 'core'
 	true
@@ -51,12 +51,16 @@ To take advantage of the auto-requiring done by Core::Loader, place your extensi
 in a directory mycore/ and make sure your $LOAD\_PATH contains mycore's parent directory.
 In other words, `require 'mycore/array'` should be valid.
 
-To wrap up your methods for MyCore, see my extensions or use this template:
+A basic template to wrap up your methods for a MyCore extension would look like:
 
 	#in mycore/array.rb
 	module MyCore
-		#extensions for Array's
 		module Array
+      module ClassMethods
+        #class methods for Array
+      end
+
+		  # instance methods for Array
 			def blah
 			end
 			#....
@@ -73,7 +77,7 @@ Patches for more thorough checks are welcome.
 Todo
 ====
 
-* Support extending class methods of the extended class ie for my File, Dir, IO, Object extensions
-* Import/Upgrade my old tests for my extension classes.
+* Import/Upgrade old tests for my extension classes.
 * Provide aliasing for methods to bypass method name clashes.
+* Use Ruby2Ruby to handpick methods to extend
 * Make it easier to share/install core extensions made by others.

@@ -60,7 +60,7 @@ module Core
     end
 
     def check_class_methods(klass, extension_klass)
-      all_class_methods(klass) & all_class_methods(extension_klass)
+      all_class_methods(klass) & all_instance_methods(extension_klass)
     end
 
     def check_instance_methods(klass, extension_klass)
