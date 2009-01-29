@@ -1,15 +1,15 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
-class CoreTest < Test::Unit::TestCase
+class Core::LoaderTest < Test::Unit::TestCase
   
-  test "check_for_conflicts finds conflicts" do
+  test "check_instance_methods finds conflicts" do
     eval "module ::SomeModule; def chomp!; end; end"
-    Core.check_for_conflicts(Array, ::SomeModule).should == ['chomp!']
+    Core.check_instance_methods(Array, ::SomeModule).should == ['chomp!']
   end
   
-  test "check_for_conflicts finds no conflicts" do
+  test "check_instance_methods finds no conflicts" do
     eval "module ::AnotherModule; def blah; end; end"
-    Core.check_for_conflicts(Array, ::AnotherModule).should == []
+    Core.check_instance_methods(Array, ::AnotherModule).should == []
   end
   
   context "adds_to" do
@@ -35,7 +35,7 @@ class CoreTest < Test::Unit::TestCase
     test "doesn't add extension class when there are conflicts" do
       eval "module ::BlahArray; def clear; end; end"
       capture_stdout {
-        Core.adds_to(Array, :with=>BlahArray).should be(false)
+        Core.adds_to(Array, :with=>BlahArray)
       }.should =~ /methods conflict.*clear/m
       Array.ancestors.include?(BlahArray).should be(false)
     end
@@ -46,10 +46,10 @@ class CoreTest < Test::Unit::TestCase
       Array.ancestors.include?(Blah2Array).should be(true)
     end
     
-    test "returns false when no extension class found" do
+    test "errors when no extension class found" do
       eval "class ::InvalidClass; end"
       capture_stdout { 
-        Core.adds_to(InvalidClass).should == false
+        Core.adds_to(InvalidClass)
       }.should =~ /No.*extension class found/
     end
   end
