@@ -1,34 +1,56 @@
+$:.unshift(File.dirname(__FILE__)) unless 
+  $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
 module Core
-  VERSION = "0.1.0"
-  extend self
-  
-  def adds_to(klass, options = {})
-    extension_klass = options[:from]
-    require("core/#{klass.to_s.downcase}") if extension_klass.nil?
-    extension_klass ||=  Core.const_get(klass.to_s) rescue nil
-    puts("No Core class found") and return nil unless extension_klass
+  module Loader    
+    def self.included(base)
+      base.extend(self)
+    end
     
-    conflicts = check_for_conflicts(klass, extension_klass)
-    if conflicts.empty? || options[:force]
-      klass.send :include, extension_klass
-    else
-      puts "Couldn't include #{extension_klass} into #{klass} because the following methods conflict:"
-      puts conflicts.sort.join(", ")
+    def adds_to(klass, options = {})
+      unless (extension_klass = options[:with] || get_extension_class(klass))
+        puts "No #{self} extension class found"
+        return false
+      end
+      conflicts = check_for_conflicts(klass, extension_klass)
+      if conflicts.empty? || options[:force]
+        klass.send :include, extension_klass
+      else
+        puts "Couldn't include #{extension_klass} into #{klass} because the following methods conflict:"
+        puts conflicts.sort.join(", ")
+        false
+      end
     end
-  end
-  
-  def check_for_conflicts(klass, extension_klass)
-    if extension_klass.to_s =~ /ClassMethods/
-      puts "TODO"
-    else
-      all_instance_methods(klass) & all_instance_methods(extension_klass)
+    alias_method :add_to, :adds_to
+    
+    def detect_extension_class(klass)
+      extension_klass = self.const_get(klass.to_s) rescue nil
+      extension_klass = nil if extension_klass == klass
+      extension_klass
     end
-  end
+    
+    def get_extension_class(klass)
+      unless (extension_klass = detect_extension_class(klass))
+        #try again but first by requiring possible file
+        begin; require("#{self.to_s.gsub('::','/').downcase}/#{klass.to_s.downcase}"); rescue(LoadError); end
+        extension_klass = detect_extension_class(klass)
+      end
+      extension_klass
+    end
   
-  def all_instance_methods(klass)
-    klass.public_instance_methods + klass.private_instance_methods + klass.protected_instance_methods
+    def check_for_conflicts(klass, extension_klass)
+      if false #TODO: extension_klass.to_s =~ /ClassMethods/
+      else
+        all_instance_methods(klass) & all_instance_methods(extension_klass)
+      end
+    end
+  
+    def all_instance_methods(klass)
+      klass.public_instance_methods + klass.private_instance_methods + klass.protected_instance_methods
+    end
   end
 end
+
+Core.send :include, Core::Loader
 
 __END__
 
