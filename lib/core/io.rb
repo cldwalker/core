@@ -5,4 +5,17 @@ class IO
     i = f.index(string) || 100000
     f.slice(0,i)
   end
+  
+  #from output_catcher gem
+  def self.capture_stdout(&block)
+    original_stdout = $stdout
+    $stdout = fake = StringIO.new
+    begin
+      yield
+    ensure
+      $stdout = original_stdout
+    end
+    fake.string
+  end
+  
 end
