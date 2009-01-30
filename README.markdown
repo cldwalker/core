@@ -1,10 +1,11 @@
 Description
 ===========
 
-My extensions to core and standard ruby 1.8 classes, similar to the facets and activesupport gems.
-Although my extensions are probably nothing new, they are unobtrusive (monkeypatching is up to you)
-and have basic checks for preventing method name collision.
-So if you're not feeling shy, monkeypatch: 
+Provides an easy way of using/sharing our Ruby extensions without forcing monkeypatching on anyone.
+Extensions to classes can be under any namespace but are assumed to map in a simple way.
+For example, for the namespace Core, Core::Array would map to Array.
+
+So, if you're not feeling shy, let's monkeypatch with the default extensions in Core:
 
 	irb>> require 'core'
 	true
@@ -39,6 +40,12 @@ Phew, that was a close one. But wait, I really do think I know what I'm doing:
 	=>nil
 	
 Hopefully you'll use the force option more wisely.	
+
+My Core
+=======
+
+Ships with this gem for now as an example. Activesupport and facets gems have much
+better tested extensions and should serve as starting points for collecting your own extensions.
 
 Your Core
 =========
@@ -77,7 +84,9 @@ Patches for more thorough checks are welcome.
 Todo
 ====
 
-* Make it easier to share/install core extensions made by others ie sake-like.
+* Support file structure where a class's methods are put in a folder with its name ie
+  activesupport/facets-like.
+* Make it easier to share (a la sake) and use core extensions made by others.
 * Import/Upgrade old tests for my extension classes.
 * Provide aliasing for methods to bypass method name clashes.
 * Use Ruby2Ruby to handpick methods to extend.
