@@ -2,13 +2,17 @@ module Core
   module Load
     def self.included(base)
       base.class_eval %[
-        def self.adds_to(*args)
-          Loader.new(#{base}).adds_to(*args)
+        class<<self
+          def adds_to(*args)
+            Loader.new(#{base}).adds_to(*args)
+          end
+          alias_method :add_to, :adds_to
         end
       ]
     end
   end
-  class Loader 
+  
+  class Loader
     def initialize(base_class)
       @loader_base_class = base_class
     end
@@ -24,16 +28,15 @@ module Core
         extend_class_methods(klass, class_extension_klass, options)
       end
     end
-    alias_method :add_to, :adds_to
 
-    def include_instance_methods(klass, extension_klass, options)
+    def include_instance_methods(klass, extension_klass, options={})
       conflicts = check_instance_methods(klass, extension_klass)
       activate_extension_class(conflicts, klass, extension_klass, options) do |klass, extension_klass|
         klass.send :include, extension_klass
       end
     end
 
-    def extend_class_methods(klass, extension_klass, options)
+    def extend_class_methods(klass, extension_klass, options={})
       conflicts = check_class_methods(klass, extension_klass)
       activate_extension_class(conflicts, klass, extension_klass, options) do |klass, extension_klass|
         klass.send :extend, extension_klass
@@ -58,7 +61,7 @@ module Core
     def get_extension_class(klass)
       unless (extension_klass = detect_extension_class(klass))
         #try again but first by requiring possible file
-        begin; Kernel.require("#{@loader_base_class.to_s.gsub('::','/').downcase}/#{klass.to_s.downcase}"); rescue(LoadError); end
+        begin; require("#{@loader_base_class.to_s.gsub('::','/').downcase}/#{klass.to_s.downcase}"); rescue(LoadError); end
         extension_klass = detect_extension_class(klass)
       end
       extension_klass
