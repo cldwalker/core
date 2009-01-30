@@ -25,5 +25,9 @@ module Core
     def local_methods(obj = self)
       (obj.methods - obj.class.superclass.instance_methods).sort
     end
+
+    def backtick(cmd,*args)
+      IO.popen('-') {|f| f ? f.read : exec(cmd,*args)}
+    end
   end
 end
