@@ -5,15 +5,18 @@ module Core
     end
     
     def adds_to(klass, options = {})
-      unless (extension_klass = options[:with] || get_extension_class(klass))
+      extension_klass = options[:with] ? (options[:with].is_a?(String) ? class_string_to_constant(options[:with]) :
+        options[:with]) : get_extension_class(klass)
+      unless extension_klass
         puts "No #{@loader_base_class} extension class found"
-        return
+        return false
       end
       instance_extension_klass = extension_klass
       include_instance_methods(klass, instance_extension_klass, options) unless options[:only] == :class
       if (options[:only] != :instance) && (class_extension_klass = get_class_extension_class(extension_klass))
         extend_class_methods(klass, class_extension_klass, options)
       end
+      return true
     end
 
     def include_instance_methods(klass, extension_klass, options={})
@@ -45,15 +48,44 @@ module Core
       extension_klass
     end
     
+    def class_string_to_constant(klass)
+      safe_require(extension_class_to_path(klass))
+      any_const_get(klass)
+    end
+    
+    def any_const_get(name)
+      begin
+        klass = Object
+        name.split('::').each {|e|
+          klass = klass.const_get(e)
+        }
+        klass
+      rescue
+         nil
+      end
+    end
+    
+    
     def get_extension_class(klass)
       unless (extension_klass = detect_extension_class(klass))
         #try again but first by requiring possible file
-        begin; require("#{@loader_base_class.to_s.gsub('::','/').downcase}/#{klass.to_s.downcase}"); rescue(LoadError); end
+        extension_class = "#{@loader_base_class}::#{klass}"
+        path = extension_class_to_path(extension_class)
+        safe_require(path)
         extension_klass = detect_extension_class(klass)
       end
       extension_klass
     end
-
+    
+    def safe_require(path)
+      path ||= ''
+      begin; require(path); rescue(LoadError); end
+    end
+    
+    def extension_class_to_path(extension_class)
+      extension_class.to_s.gsub('::','/').downcase
+    end
+    
     def get_class_extension_class(klass)
       klass.const_get("ClassMethods") rescue nil
     end

@@ -6,11 +6,11 @@ module Core
       # Retrieves constant for given string, even if it's nested under classes.
       def any_const_get(name)
         begin
-        klass = Object
-        name.split('::').each {|e|
-          klass = klass.const_get(e)
-        }
-        klass
+          klass = Object
+          name.split('::').each {|e|
+            klass = klass.const_get(e)
+          }
+          klass
         rescue; nil; end
       end
     end
