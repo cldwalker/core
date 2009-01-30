@@ -1,17 +1,4 @@
 module Core
-  module Load
-    def self.included(base)
-      base.class_eval %[
-        class<<self
-          def adds_to(*args)
-            Loader.new(#{base}).adds_to(*args)
-          end
-          alias_method :add_to, :adds_to
-        end
-      ]
-    end
-  end
-  
   class Loader
     def initialize(base_class)
       @loader_base_class = base_class
@@ -53,6 +40,7 @@ module Core
     end
     
     def detect_extension_class(klass)
+      p [klass, @loader_base_class]
       extension_klass = @loader_base_class.const_get(klass.to_s) rescue nil
       extension_klass = nil if extension_klass == klass
       extension_klass

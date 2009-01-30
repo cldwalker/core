@@ -101,5 +101,16 @@ module Core
     def exclude_all?(arr)
       ! include_any?(arr)
     end
+
+    # A real array def, not a set diff
+    # a1 = [1,1,2]
+    # a2 = [1,2]
+    # a1 - a2 #=> []
+    # a1.diff(a2) #=> [1]
+    def diff(other)
+      list = self.dup
+      other.each { |elem| list.delete_at( list.index(elem) ) }
+      list
+    end
   end
 end

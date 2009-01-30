@@ -59,6 +59,17 @@ class Core::LoaderTest < Test::Unit::TestCase
     
   end  
   
+  context "when detecting extension class" do
+    test "return nil if invalid name" do
+      @loader.detect_extension_class(InvalidSomething).should == nil
+    end
+    
+    test "return nil if the detected name equals the given name" do
+      @loader.detect_extension_class(Regexp).should == nil
+    end
+    
+  end
+  
   context "activate_extension_class" do
     test "doesn't activate if there are conflicts" do
       eval "module ::BlahArray; def clear; end; end"
