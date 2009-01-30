@@ -77,7 +77,7 @@ Patches for more thorough checks are welcome.
 Todo
 ====
 
+* Make it easier to share/install core extensions made by others ie sake-like.
 * Import/Upgrade old tests for my extension classes.
 * Provide aliasing for methods to bypass method name clashes.
-* Use Ruby2Ruby to handpick methods to extend
-* Make it easier to share/install core extensions made by others.
+* Use Ruby2Ruby to handpick methods to extend.

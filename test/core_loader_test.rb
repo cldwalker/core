@@ -61,13 +61,18 @@ class Core::LoaderTest < Test::Unit::TestCase
   
   context "when detecting extension class" do
     test "return nil if invalid name" do
-      @loader.detect_extension_class(InvalidSomething).should == nil
+      eval "module ::InvalidModule; end"
+      @loader.detect_extension_class(InvalidModule).should == nil
     end
     
     test "return nil if the detected name equals the given name" do
       @loader.detect_extension_class(Regexp).should == nil
     end
     
+    test "returns class when found" do
+      eval "module ::Blah; end; module Core::Blah; end"
+      @loader.detect_extension_class(::Blah).should == Core::Blah
+    end
   end
   
   context "activate_extension_class" do

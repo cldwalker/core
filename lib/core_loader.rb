@@ -40,7 +40,6 @@ module Core
     end
     
     def detect_extension_class(klass)
-      p [klass, @loader_base_class]
       extension_klass = @loader_base_class.const_get(klass.to_s) rescue nil
       extension_klass = nil if extension_klass == klass
       extension_klass
