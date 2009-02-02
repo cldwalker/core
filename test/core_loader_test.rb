@@ -96,4 +96,5 @@ class Core::LoaderTest < Test::Unit::TestCase
       Array.ancestors.include?(Blah3Array).should be(true)
     end
   end
+  
 end
