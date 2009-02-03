@@ -24,30 +24,30 @@ class Core::LoaderTest < Test::Unit::TestCase
       test "with :only=>:instance, only includes instance methods" do
         @loader.expects(:include_instance_methods).once
         @loader.expects(:extend_class_methods).never
-        @loader.adds_to(Array, :only=>:instance)
+        @loader.extends(Array, :only=>:instance)
       end
       
       test "with :only=>:class only includes class methods" do
         @loader.expects(:include_instance_methods).never
         @loader.expects(:extend_class_methods).once
-        @loader.adds_to(Array, :only=>:class)
+        @loader.extends(Array, :only=>:class)
       end
       
       test "with no option includes class and instance methods" do
         @loader.expects(:include_instance_methods).once
         @loader.expects(:extend_class_methods).once
-        @loader.adds_to(Array)
+        @loader.extends(Array)
       end
       
       test "does not extend class methods if no class_methods class found" do
         @loader.expects(:include_instance_methods).once
         @loader.expects(:extend_class_methods).never
-        @loader.adds_to(String)
+        @loader.extends(String)
       end
       
       test "requires when detecting correct base extension class" do
         @loader.expects(:require).with("my/file")
-        capture_stdout { @loader.adds_to(File) }.should =~ /No.*class found/
+        capture_stdout { @loader.extends(File) }.should =~ /No.*class found/
       end
     end
     

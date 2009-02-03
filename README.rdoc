@@ -11,7 +11,7 @@ Using {my extension library}[http://github.com/cldwalker/my_core] for these exam
   true
   irb>> Core.default_library = MyCore
   MyCore
-  irb>> Core.adds_to Array
+  irb>> Core.extends Array
   true
   irb>> Array.ancestors
   => [Array, MyCore::Array, Enumerable, Object, PP::ObjectMixin, Kernel]

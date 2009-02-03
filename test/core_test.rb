@@ -10,7 +10,7 @@ class CoreTest < Test::Unit::TestCase
     eval "module Core::Array; module ClassMethods; end; end"
     Array.ancestors.include?(Core::Array).should be(false)
     get_eigenclass(Array).ancestors.include?(Core::Array::ClassMethods).should be(false)
-    Core.adds_to(Array)
+    Core.extends(Array)
     Array.ancestors.include?(Core::Array).should be(true)
     get_eigenclass(Array).ancestors.include?(Core::Array::ClassMethods).should be(true)
   end
@@ -19,7 +19,7 @@ class CoreTest < Test::Unit::TestCase
     eval "module Core::AnotherArray; ; module ClassMethods; end; end"
     Array.ancestors.include?(Core::AnotherArray).should be(false)
     get_eigenclass(Array).ancestors.include?(Core::AnotherArray::ClassMethods).should be(false)
-    Core.adds_to(Array, :with=>Core::AnotherArray)
+    Core.extends(Array, :with=>Core::AnotherArray)
     Array.ancestors.include?(Core::AnotherArray).should be(true)
     get_eigenclass(Array).ancestors.include?(Core::AnotherArray::ClassMethods).should be(true)
   end
@@ -27,7 +27,7 @@ class CoreTest < Test::Unit::TestCase
   test "errors when no base extension class found" do
     eval "class ::InvalidClass; end"
     capture_stdout { 
-      Core.adds_to(InvalidClass)
+      Core.extends(InvalidClass)
     }.should =~ /No.*extension class found/
   end
 end

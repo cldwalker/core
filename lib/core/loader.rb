@@ -17,10 +17,10 @@ module Core
       library
     end
 
-    def adds_to(*args)
-      Singleton.adds_to(*args)
+    def extends(*args)
+      Singleton.extends(*args)
     end
-    alias_method :add_to, :adds_to
+    alias_method :add_to, :extends
 
     module Singleton
       extend self
@@ -40,7 +40,7 @@ module Core
         current_base_class(false).to_s
       end
       
-      def adds_to(klass, options = {})
+      def extends(klass, options = {})
         set_current_library(options[:library])
         @verbose = options[:verbose] if options[:verbose]
         extension_klass = options[:with] ? (options[:with].is_a?(String) ? class_string_to_constant(options[:with]) :
