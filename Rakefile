@@ -23,7 +23,7 @@ begin
     s.email = "gabriel.horner@gmail.com"
     s.homepage = "http://github.com/cldwalker/core"
     s.authors = ["Gabriel Horner"]
-    s.files = FileList["VERSION.yml", "Rakefile", "README.markdown", "LICENSE.txt", "{bin,lib}/**/*"]
+    s.files = FileList["VERSION.yml", "Rakefile", "README.markdown", "LICENSE.txt", "{bin,lib,test}/**/*"]
     s.has_rdoc = true
     s.extra_rdoc_files = ["README.markdown", "LICENSE.txt" ]
   end

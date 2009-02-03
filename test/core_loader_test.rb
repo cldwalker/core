@@ -1,7 +1,20 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
+
 class Core::LoaderTest < Test::Unit::TestCase
-  before(:each) {@loader = Core::Loader.new(Core)}
+  before(:all) do
+    #define main test module
+    eval %[
+      module ::My
+        module Array
+          module ClassMethods; end
+        end
+      module String; end
+    end
+    ]
+  end
+
+  before(:each) {@loader = Core::Loader.new(::My)}
   
   context "Core::Loader" do
     test "check_instance_methods finds public and private conflicts" do
@@ -32,14 +45,12 @@ class Core::LoaderTest < Test::Unit::TestCase
       end
       
       test "with :only=>:class only includes class methods" do
-        eval "module ::Core; module Array; module ClassMethods; end; end; end"
         @loader.expects(:include_instance_methods).never
         @loader.expects(:extend_class_methods).once
         @loader.adds_to(Array, :only=>:class)
       end
       
       test "with no option includes class and instance methods" do
-        eval "module ::Core; module Array; module ClassMethods; end; end; end"
         @loader.expects(:include_instance_methods).once
         @loader.expects(:extend_class_methods).once
         @loader.adds_to(Array)
@@ -52,7 +63,7 @@ class Core::LoaderTest < Test::Unit::TestCase
       end
       
       test "requires when detecting correct base extension class" do
-        @loader.expects(:require).with("core/file")
+        @loader.expects(:require).with("my/file")
         capture_stdout { @loader.adds_to(File) }.should =~ /No.*class found/
       end
     end
@@ -70,8 +81,8 @@ class Core::LoaderTest < Test::Unit::TestCase
     end
     
     test "returns class when found" do
-      eval "module ::Blah; end; module Core::Blah; end"
-      @loader.detect_extension_class(::Blah).should == Core::Blah
+      eval "module ::Blah; end; module My::Blah; end"
+      @loader.detect_extension_class(::Blah).should == My::Blah
     end
   end
   
