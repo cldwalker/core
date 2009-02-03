@@ -1,5 +1,7 @@
 module Core
   class Loader
+    include Core::Util
+
     def initialize(base_class)
       @loader_base_class = base_class
       @current_library = {
@@ -11,7 +13,7 @@ module Core
     def current_base_class(force_class=true)
       if force_class
         if @current_library[:base_class].is_a?(String)
-          @current_library[:base_class] = Core::Util.any_const_get(@current_library[:base_class])
+          @current_library[:base_class] = any_const_get(@current_library[:base_class])
         end
         raise "Base class needs to be a Class" if ![Class, Module].include?(@current_library[:base_class].class)
       end
@@ -27,7 +29,7 @@ module Core
       set_current_library(options[:library])
       extension_klass = options[:with] ? (options[:with].is_a?(String) ? class_string_to_constant(options[:with]) :
         options[:with]) : get_extension_class(klass)
-      unless extension_klass
+      unless extension_klass && extension_klass != klass
         puts "No #{current_base_class_string} extension class found"
         return false
       end
@@ -48,14 +50,14 @@ module Core
     end
 
     def include_instance_methods(klass, extension_klass, options={})
-      conflicts = Core::Util.check_instance_methods(klass, extension_klass)
+      conflicts = check_instance_methods(klass, extension_klass)
       activate_extension_class(conflicts, klass, extension_klass, options) do |klass, extension_klass|
         klass.send :include, extension_klass
       end
     end
 
     def extend_class_methods(klass, extension_klass, options={})
-      conflicts = Core::Util.check_class_methods(klass, extension_klass)
+      conflicts = check_class_methods(klass, extension_klass)
       activate_extension_class(conflicts, klass, extension_klass, options) do |klass, extension_klass|
         klass.send :extend, extension_klass
       end
@@ -80,7 +82,7 @@ module Core
       #adds base class if class is relative
       klass = "#{current_base_class_string}::#{klass}" if !klass.include?(current_base_class_string)
       safe_require(extension_class_to_path(klass))
-      Core::Util.any_const_get(klass)
+      any_const_get(klass)
     end
     
     def get_extension_class(klass)
@@ -106,8 +108,7 @@ module Core
     end
     
     def class_to_path(klass)
-      path = klass.to_s.gsub('::','/').downcase
-      #Core::Util.underscore(klass)
+      underscore(klass)
     end
     
     def get_class_extension_class(klass)
