@@ -1,6 +1,5 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
-
 class Core::LoaderTest < Test::Unit::TestCase
   before(:all) do
     #define main test module
@@ -17,25 +16,6 @@ class Core::LoaderTest < Test::Unit::TestCase
   before(:each) {@loader = Core::Loader.new(::My)}
   
   context "Core::Loader" do
-    test "check_instance_methods finds public and private conflicts" do
-      eval "module ::SomeModule; def map; end; def chomp!; end; end"
-      @loader.check_instance_methods(Array, ::SomeModule).sort.should == ['chomp!', 'map']
-    end
-  
-    test "check_instance_methods finds no conflicts" do
-      eval "module ::AnotherModule; def blah; end; end"
-      @loader.check_instance_methods(Array, ::AnotherModule).should == []
-    end
-    
-    test "check_class_methods finds public and private conflicts" do
-      eval "module ::SomeModule2; def []; end; end"
-      @loader.check_class_methods(Array, ::SomeModule2).should == ['[]']
-    end
-    
-    test "check_class_methods finds no conflicts" do
-      eval "module ::AnotherModule; def blah; end; end"
-      @loader.check_class_methods(Array, ::AnotherModule).should == []
-    end
     
     context "when adding" do
       test "with :only=>:instance, only includes instance methods" do

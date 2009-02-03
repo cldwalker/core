@@ -11,7 +11,7 @@ module Core
     def current_base_class(force_class=true)
       if force_class
         if @current_library[:base_class].is_a?(String)
-          @current_library[:base_class] = any_const_get(@current_library[:base_class])
+          @current_library[:base_class] = Core::Util.any_const_get(@current_library[:base_class])
         end
         raise "Base class needs to be a Class" if ![Class, Module].include?(@current_library[:base_class].class)
       end
@@ -48,14 +48,14 @@ module Core
     end
 
     def include_instance_methods(klass, extension_klass, options={})
-      conflicts = check_instance_methods(klass, extension_klass)
+      conflicts = Core::Util.check_instance_methods(klass, extension_klass)
       activate_extension_class(conflicts, klass, extension_klass, options) do |klass, extension_klass|
         klass.send :include, extension_klass
       end
     end
 
     def extend_class_methods(klass, extension_klass, options={})
-      conflicts = check_class_methods(klass, extension_klass)
+      conflicts = Core::Util.check_class_methods(klass, extension_klass)
       activate_extension_class(conflicts, klass, extension_klass, options) do |klass, extension_klass|
         klass.send :extend, extension_klass
       end
@@ -80,19 +80,7 @@ module Core
       #adds base class if class is relative
       klass = "#{current_base_class_string}::#{klass}" if !klass.include?(current_base_class_string)
       safe_require(extension_class_to_path(klass))
-      any_const_get(klass)
-    end
-    
-    def any_const_get(name)
-      begin
-        klass = Object
-        name.split('::').each {|e|
-          klass = klass.const_get(e)
-        }
-        klass
-      rescue
-         nil
-      end
+      Core::Util.any_const_get(klass)
     end
     
     def get_extension_class(klass)
@@ -114,32 +102,17 @@ module Core
     
     def extension_class_to_path(extension_class)
       partially_converted = extension_class.to_s.gsub(current_base_class_string, @current_library[:base_path])
-      class_to_path(partially_converted)
+      path = class_to_path(partially_converted)
     end
     
     def class_to_path(klass)
-      #td: camelize
-      klass.to_s.gsub('::','/').downcase
+      path = klass.to_s.gsub('::','/').downcase
+      #Core::Util.underscore(klass)
     end
     
     def get_class_extension_class(klass)
       klass.const_get("ClassMethods") rescue nil
     end
 
-    def check_class_methods(klass, extension_klass)
-      all_class_methods(klass) & all_instance_methods(extension_klass)
-    end
-
-    def check_instance_methods(klass, extension_klass)
-      all_instance_methods(klass) & all_instance_methods(extension_klass)
-    end
-
-    def all_class_methods(klass)
-      klass.public_methods + klass.private_methods + klass.protected_methods
-    end
-
-    def all_instance_methods(klass)
-      klass.public_instance_methods + klass.private_instance_methods + klass.protected_instance_methods
-    end
   end
 end
