@@ -8,14 +8,12 @@ for an explanation of why.
 
 To come...
 
-Limitations
-===========
+== Limitations
 
 Checks for method name collisions currently use \*instance\_methods and *methods of a class.
 Patches for more thorough checks are welcome.
 
-Todo
-====
+== Todo
 
 * Support file structure where a class's methods are put in a folder with its name ie
   activesupport/facets-like.
