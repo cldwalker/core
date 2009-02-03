@@ -14,8 +14,8 @@ class Core::LoaderTest < Test::Unit::TestCase
   end
 
   before(:each) {
-    Core::Loader.default_library = ::My
-    @loader = Core::Loader::Singleton
+    Core.default_library = ::My
+    @loader = Core::Loader
   }
   
   context "Core::Loader" do
