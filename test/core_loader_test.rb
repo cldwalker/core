@@ -13,7 +13,10 @@ class Core::LoaderTest < Test::Unit::TestCase
     ]
   end
 
-  before(:each) {@loader = Core::Loader.new(::My)}
+  before(:each) {
+    Core::Loader.default_library = ::My
+    @loader = Core::Loader::Singleton
+  }
   
   context "Core::Loader" do
     

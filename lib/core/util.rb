@@ -37,5 +37,14 @@ module Core
        tr("-", "_").
        downcase
     end
+
+    def class_to_path(klass)
+      underscore(klass)
+    end
+
+    def class_to_lib_name(klass)
+      class_to_path(klass).split("/")[0].to_sym
+    end
+    
   end
 end

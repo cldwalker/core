@@ -4,6 +4,7 @@ class CoreTest < Test::Unit::TestCase
   def get_eigenclass(object)
     class << object; self; end
   end
+  before(:all) {Core::Loader.default_library = Core }
   
   test "extends class and instance methods when detecting extension class" do
     eval "module Core::Array; module ClassMethods; end; end"
