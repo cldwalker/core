@@ -24,9 +24,9 @@ Patches for more thorough checks are welcome.
 
 == Todo
 
-* Support file structure where a class's methods are put in a folder with its name ie
+* Config file to save/load your often used extensions
+* Support loading multiple files ie multiple methods under a class directory ie
   activesupport/facets-like.
 * Make it easier to share (a la sake) and use core extensions made by others.
-* Import/Upgrade old tests for my extension classes.
 * Provide aliasing for methods to bypass method name clashes.
 * Use Ruby2Ruby to handpick methods to extend.

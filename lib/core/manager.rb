@@ -32,7 +32,7 @@ module Core
     #td: validation
     def create_library(lib)
       library = lib.is_a?(Hash) ? lib : {:base_class=>lib, :base_path=>Core::Util.class_to_path(lib) }
-      libraries[Core::Util.class_to_lib_name(library[:base_class])] = library
+      libraries[Core::Util.class_to_lib_name(library[:base_class] || library[:base_path])] = library
       library
     end
     end

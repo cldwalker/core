@@ -9,6 +9,12 @@ class Core::ManagerTest < Test::Unit::TestCase
     Core::Manager.libraries[:funky].should == lib
   end
   
+  test "creates library with a hash but no base_class" do
+    lib = {:base_path=>"funky/ext", :monkeypatch=>true}
+    Core::Manager.create_library(lib)
+    Core::Manager.libraries[:funky].should == lib
+  end
+  
   test "creates library with base class" do
     lib = {:base_class=>::Base, :base_path=>"base"}
     Core::Manager.create_library(::Base)
