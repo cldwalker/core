@@ -5,15 +5,28 @@ module Core
     attr_accessor :default_library
     def libraries; @libraries ||= {}; end
     def reset_libraries; @libraries = nil; end
+    def reset_default_library; @default_library = nil; end
 
-    def default_library=(lib_or_class)
-      if lib_or_class.is_a?(Hash)
-        @default_library = create_library(lib_or_class)
+    def default_library=(lib)
+      lib = find_or_create_library(lib)
+      @default_library = lib if lib
+    end
+      
+    def find_or_create_library(lib)
+      if lib.is_a?(Hash)
+        result_lib = create_library(lib)
+      elsif lib.is_a?(Symbol)
+        if libraries[lib]
+          result_lib = libraries[lib]
+        else
+          puts "Library '#{lib}' not found"
+          return nil
+        end
       else
-        lib_name = lib_or_class.is_a?(Symbol) ? lib_or_class : Core::Util.class_to_lib_name(lib_or_class)
-        @default_library = libraries[lib_name] || create_library(lib_or_class)
+        lib_name = Core::Util.class_to_lib_name(lib)
+        result_lib = libraries[lib_name] || create_library(lib)
       end
-      @default_library
+      result_lib
     end
 
     #td: validation

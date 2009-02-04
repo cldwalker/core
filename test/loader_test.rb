@@ -14,13 +14,15 @@ class Core::LoaderTest < Test::Unit::TestCase
   end
 
   before(:each) {
-    Core.default_library = ::My
     @loader = Core::Loader
   }
   
   context "Core::Loader" do
-    
+  
     context "when adding" do
+      before(:each) {
+        Core.default_library = ::My
+      }
       test "with :only=>:instance, only includes instance methods" do
         @loader.expects(:include_instance_methods).once
         @loader.expects(:extend_class_methods).never
@@ -33,7 +35,7 @@ class Core::LoaderTest < Test::Unit::TestCase
         @loader.extends(Array, :only=>:class)
       end
       
-      test "with no option includes class and instance methods" do
+      test "with no only option includes class and instance methods" do
         @loader.expects(:include_instance_methods).once
         @loader.expects(:extend_class_methods).once
         @loader.extends(Array)
@@ -48,12 +50,31 @@ class Core::LoaderTest < Test::Unit::TestCase
       test "requires when detecting correct base extension class" do
         @loader.expects(:require).with("my/file")
         capture_stdout { @loader.extends(File) }.should =~ /No.*class found/
-      end
+      end      
     end
     
-  end  
+  end
+  
+  context "set_current_library" do
+    test "with no default libary returns empty hash when given nil" do
+      Core::Manager.reset_default_library
+      @loader.set_current_library(nil).should == {}
+    end
+    
+    test "with default library returns default library when given nil" do
+      default_lib = {:base_class=>"Blah", :base_path=>"blah"}
+      Core.default_library = default_lib
+      @loader.set_current_library(nil).should == default_lib
+    end
+    
+    test "calls find_or_create_library when given library" do
+      Core::Manager.expects(:find_or_create_library).once
+      @loader.set_current_library(:blah)
+    end
+  end
   
   context "when detecting extension class" do
+    before(:each) { @loader.current_library = {:base_class=>::My, :base_path=>"my"}}
     test "return nil if invalid name" do
       eval "module ::InvalidModule; end"
       @loader.detect_extension_class(InvalidModule).should == nil

@@ -42,5 +42,9 @@ class Core::ManagerTest < Test::Unit::TestCase
       lib = {:base_class=>::Base, :base_path=>"base"}
       Core::Manager.default_library.should == lib
     end
+    
+    test "with invalid symbol warns nothing found" do
+      capture_stdout {Core::Manager.default_library = :blah}.should =~ /not found/
+    end
   end
 end

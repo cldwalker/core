@@ -4,6 +4,7 @@ module Core
   module Loader
     extend self
     extend Core::Util
+    attr_accessor :current_library
 
     def current_base_class(force_class=true)
       if force_class
@@ -20,7 +21,7 @@ module Core
     end
     
     def extends(klass, options = {})
-      set_current_library(options[:library])
+      set_current_library(options[:lib])
       @verbose = options[:verbose] || true
       extension_klass = options[:with] ? (options[:with].is_a?(String) ? class_string_to_constant(options[:with]) :
         options[:with]) : get_extension_class(klass)
@@ -38,13 +39,8 @@ module Core
     end
     
     def set_current_library(library)
-      if library
-        #td: convert string base class to real one
-        @current_library = library.is_a?(Symbol) ? Manager.libraries[library] : library
-      else
-        base_class = nil
-        @current_library = Manager.default_library || (base_class ? Manager.create_library(base_class) :  {})
-      end
+      @current_library = library ? Manager.find_or_create_library(library) : Manager.default_library
+      @current_library ||= {}
     end
 
     def include_instance_methods(klass, extension_klass, options={})
@@ -73,7 +69,7 @@ module Core
     end
     
     def detect_extension_class(klass)
-      extension_klass = current_base_class.const_get(klass.to_s) rescue nil
+      extension_klass = current_base_class.const_get(klass.to_s)
       extension_klass = nil if extension_klass == klass
       extension_klass
     end
