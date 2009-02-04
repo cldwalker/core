@@ -6,5 +6,7 @@ module Core
     def libraries; Manager.libraries; end
     def create_library(*args); Manager.create_library(*args); end
     def extends(*args, &block); Loader.extends(*args, &block); end
+    def verbose; Loader.verbose; end
+    def verbose=(value); Loader.verbose=(value); end
   end
 end

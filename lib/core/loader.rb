@@ -4,7 +4,7 @@ module Core
   module Loader
     extend self
     extend Core::Util
-    attr_accessor :current_library
+    attr_accessor :current_library, :verbose
 
     def current_base_class(force_class=true)
       if force_class
@@ -23,7 +23,7 @@ module Core
     def extends(klass, options = {})
       raise ArgumentError, "First argument should be a Module" if ! klass.is_a?(Module)
       set_current_library(options[:lib])
-      @verbose = options[:verbose] || true
+      @verbose = options[:verbose] if options[:verbose]
       unless (extension_klass = get_extension_base_class(klass, options[:with]))
         puts "No #{current_base_class_string} extension class found"
         return false
