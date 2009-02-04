@@ -11,7 +11,7 @@ module Core
         if @current_library[:base_class].is_a?(String)
           @current_library[:base_class] = any_const_get(@current_library[:base_class])
         end
-        raise "Base class needs to be a Class" if ![Class, Module].include?(@current_library[:base_class].class)
+        raise "Base class needs to be a Class" if !@current_library[:base_class].is_a?(Module)
       end
       @current_library[:base_class]
     end
@@ -21,16 +21,15 @@ module Core
     end
     
     def extends(klass, options = {})
+      raise ArgumentError, "First argument should be a Module" if ! klass.is_a?(Module)
       set_current_library(options[:lib])
       @verbose = options[:verbose] || true
-      extension_klass = options[:with] ? (options[:with].is_a?(String) ? class_string_to_constant(options[:with]) :
-        options[:with]) : get_extension_class(klass)
-      unless extension_klass && extension_klass != klass
+      unless (extension_klass = get_extension_base_class(klass, options[:with]))
         puts "No #{current_base_class_string} extension class found"
         return false
       end
-      #td: check for InstanceMethods
-      instance_extension_klass = extension_klass
+      
+      instance_extension_klass = get_instance_extension_klass(extension_klass) || extension_klass
       include_instance_methods(klass, instance_extension_klass, options) unless options[:only] == :class
       if (options[:only] != :instance) && (class_extension_klass = get_class_extension_class(extension_klass))
         extend_class_methods(klass, class_extension_klass, options)
@@ -69,7 +68,7 @@ module Core
     end
     
     def detect_extension_class(klass)
-      extension_klass = current_base_class.const_get(klass.to_s)
+      extension_klass = current_base_class.const_get(klass.to_s) rescue nil
       extension_klass = nil if extension_klass == klass
       extension_klass
     end
@@ -81,7 +80,17 @@ module Core
       any_const_get(klass)
     end
     
-    def get_extension_class(klass)
+    def get_extension_base_class(extended_klass, klass)
+      if klass
+        base_class = klass.is_a?(String) ? class_string_to_constant(klass) : klass
+      else
+        base_class = guess_extension_class(extended_klass)
+      end
+      base_class = nil if base_class == extended_klass
+      base_class
+    end
+    
+    def guess_extension_class(klass)
       unless (extension_klass = detect_extension_class(klass))
         #try again but first by requiring possible file
         extension_class = "#{current_base_class_string}::#{klass}"
@@ -101,6 +110,10 @@ module Core
     def extension_class_to_path(extension_class)
       partially_converted = extension_class.to_s.gsub(current_base_class_string, @current_library[:base_path])
       path = class_to_path(partially_converted)
+    end
+    
+    def get_instance_extension_klass(klass)
+      klass.const_get("InstanceMethods") rescue nil
     end
     
     def get_class_extension_class(klass)

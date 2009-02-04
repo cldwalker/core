@@ -2,10 +2,13 @@ require File.join(File.dirname(__FILE__), 'test_helper')
 
 class Core::LoaderTest < Test::Unit::TestCase
   before(:all) do
-    #define main test module
     eval %[
+      #a mock core class
+      module ::Fake; end
+
+      #main extension module
       module ::My
-        module Array
+        module Fake
           module ClassMethods; end
         end
       module String; end
@@ -26,21 +29,21 @@ class Core::LoaderTest < Test::Unit::TestCase
       test "with :only=>:instance, only includes instance methods" do
         @loader.expects(:include_instance_methods).once
         @loader.expects(:extend_class_methods).never
-        @loader.extends(Array, :only=>:instance)
+        @loader.extends(Fake, :only=>:instance)
       end
       
       test "with :only=>:class only includes class methods" do
         @loader.expects(:include_instance_methods).never
         @loader.expects(:extend_class_methods).once
-        @loader.extends(Array, :only=>:class)
+        @loader.extends(Fake, :only=>:class)
       end
       
       test "with no only option includes class and instance methods" do
         @loader.expects(:include_instance_methods).once
         @loader.expects(:extend_class_methods).once
-        @loader.extends(Array)
+        @loader.extends(Fake)
       end
-      
+            
       test "does not extend class methods if no class_methods class found" do
         @loader.expects(:include_instance_methods).once
         @loader.expects(:extend_class_methods).never
@@ -50,7 +53,11 @@ class Core::LoaderTest < Test::Unit::TestCase
       test "requires when detecting correct base extension class" do
         @loader.expects(:require).with("my/file")
         capture_stdout { @loader.extends(File) }.should =~ /No.*class found/
-      end      
+      end
+      
+      test "raises ArgumentError if not extending a Class" do
+        assert_raise(ArgumentError) { @loader.extends("My") }
+      end
     end
     
   end
@@ -73,42 +80,41 @@ class Core::LoaderTest < Test::Unit::TestCase
     end
   end
   
-  context "when detecting extension class" do
+  context "with current library" do
     before(:each) { @loader.current_library = {:base_class=>::My, :base_path=>"my"}}
-    test "return nil if invalid name" do
-      eval "module ::InvalidModule; end"
-      @loader.detect_extension_class(InvalidModule).should == nil
-    end
     
-    test "return nil if the detected name equals the given name" do
-      @loader.detect_extension_class(Regexp).should == nil
-    end
+    context "when detecting extension class" do
+      test "return nil if the detected name equals the given name" do
+        eval "module ::InvalidModule; end"
+        @loader.detect_extension_class(InvalidModule).should == nil
+      end
     
-    test "returns class when found" do
-      eval "module ::Blah; end; module My::Blah; end"
-      @loader.detect_extension_class(::Blah).should == My::Blah
+      test "returns class when found" do
+        eval "module ::Blah; end; module My::Blah; end"
+        @loader.detect_extension_class(::Blah).should == My::Blah
+      end
     end
   end
   
   context "activate_extension_class" do
     test "doesn't activate if there are conflicts" do
-      eval "module ::BlahArray; def clear; end; end"
+      eval "module ::BlahFake; def clear; end; end"
       capture_stdout {
-        @loader.include_instance_methods(Array, BlahArray)
+        @loader.include_instance_methods(Fake, BlahFake)
       }.should =~ /methods conflict.*clear/m
-      Array.ancestors.include?(BlahArray).should be(false)
+      Fake.ancestors.include?(BlahFake).should be(false)
     end
       
     test "activates extension if forced" do
-      eval "module ::Blah2Array; def clear; end; end"
-      @loader.include_instance_methods(Array, Blah2Array, :force=>true)
-      Array.ancestors.include?(Blah2Array).should be(true)
+      eval "module ::Blah2Fake; def clear; end; end"
+      @loader.include_instance_methods(Fake, Blah2Fake, :force=>true)
+      Fake.ancestors.include?(Blah2Fake).should be(true)
     end
     
     test "activates if there are no conflicts" do
-      eval "module ::Blah3Array; def blang; end; end"
-      @loader.include_instance_methods(Array, Blah3Array)
-      Array.ancestors.include?(Blah3Array).should be(true)
+      eval "module ::Blah3Fake; def blang; end; end"
+      @loader.include_instance_methods(Fake, Blah3Fake)
+      Fake.ancestors.include?(Blah3Fake).should be(true)
     end
   end
   
