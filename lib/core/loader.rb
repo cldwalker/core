@@ -24,6 +24,11 @@ module Core
       raise ArgumentError, "First argument should be a Module" if ! klass.is_a?(Module)
       set_current_library(options[:lib])
       @verbose = options[:verbose] if options[:verbose]
+      if @current_library[:monkeypatch]
+        options[:with] = "#{klass}::#{options[:with]}" if options[:with] && !options[:with].include?(klass.to_s)
+        file_path = File.join(@current_library[:base_path], class_to_path(options[:with] || klass.to_s))
+        return safe_require(file_path)
+      end
       unless (extension_klass = get_extension_base_class(klass, options[:with]))
         puts "No #{current_base_class_string} extension class found"
         return false
@@ -104,7 +109,7 @@ module Core
     def safe_require(path)
       path ||= ''
       puts "loading path '#{path}'" if @verbose
-      begin; require(path); rescue(LoadError); end
+      begin;require(path); rescue(LoadError); false; end
     end
     
     def extension_class_to_path(extension_class)

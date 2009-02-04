@@ -58,6 +58,21 @@ class Core::LoaderTest < Test::Unit::TestCase
       test "raises ArgumentError if not extending a Class" do
         assert_raise(ArgumentError) { @loader.extends("My") }
       end
+      
+      test "with monkeypatch and no with option" do
+        @loader.expects(:require).with("facets/fake")
+        @loader.extends(Fake, :lib=>{:monkeypatch=>true, :base_class=>:facets, :base_path=>"facets"})
+      end
+      
+      test "with monkeypatch and string with option" do
+        @loader.expects(:require).with("facets/fake/method1")
+        @loader.extends(Fake, :with=>"Fake::Method1", :lib=>{:monkeypatch=>true, :base_class=>:facets, :base_path=>"facets"})
+      end
+      
+      test "with monkeypatch and relative string with option" do
+        @loader.expects(:require).with("facets/fake/method1")
+        @loader.extends(Fake, :with=>"Method1", :lib=>{:monkeypatch=>true, :base_class=>:facets, :base_path=>"facets"})
+      end
     end
     
   end
