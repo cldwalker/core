@@ -18,7 +18,7 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |s|
     s.name = "core"
-    s.description = "My extensions to core ruby classes, similar to the facets gem."
+    s.description = "Manages using and sharing ruby extension libraries ie ActiveSupport, facets"
     s.summary = s.description
     s.email = "gabriel.horner@gmail.com"
     s.homepage = "http://github.com/cldwalker/core"
