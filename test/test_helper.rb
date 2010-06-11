@@ -1,12 +1,12 @@
 require 'rubygems'
-require 'test/unit'
-require 'context' #gem install jeremymcanally-context -s http://gems.github.com
-require 'matchy' #gem install jeremymcanally-matchy -s http://gems.github.com
+require 'bacon'
+require 'mocha-on-bacon'
 require 'mocha'
-#require 'pending' #gem install jeremymcanally-pending -s http://gems.github.com
 require 'core'
 
-class Test::Unit::TestCase
+class Bacon::Context
+  def before_all; yield; end
+
   def capture_stdout(&block)
     original_stdout = $stdout
     $stdout = fake = StringIO.new
@@ -16,12 +16,5 @@ class Test::Unit::TestCase
       $stdout = original_stdout
     end
     fake.string
-  end
-end
-
-#from ActiveSupport
-class Hash
-  def slice(*keys)
-    reject { |key,| !keys.include?(key) }
   end
 end
