@@ -1,6 +1,5 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
-# class Core::ManagerTest < Test::Unit::TestCase
 describe "Manager" do
   before_all { eval "module ::Base; end" }
   before { Core::Manager.reset_libraries }
