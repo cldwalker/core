@@ -27,7 +27,10 @@ module Core
       if @current_library[:monkeypatch]
         options[:with] = "#{klass}::#{options[:with]}" if options[:with] && !options[:with].include?(klass.to_s)
         file_path = File.join(@current_library[:base_path], class_to_path(options[:with] || klass.to_s))
-        return safe_require(file_path)
+        unless (result = safe_require(file_path))
+          puts "Library file '#{file_path}' not found" if @verbose
+        end
+        return result
       end
       unless (extension_klass = get_extension_base_class(klass, options[:with]))
         puts "No #{current_base_class_string} extension class found"

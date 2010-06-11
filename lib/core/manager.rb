@@ -32,8 +32,25 @@ module Core
     #td: validation
     def create_library(lib)
       library = lib.is_a?(Hash) ? lib : {:base_class=>lib, :base_path=>Core::Util.class_to_path(lib) }
-      libraries[Core::Util.class_to_lib_name(library[:base_class] || library[:base_path])] = library
+      libraries[library_name(library)] = library
       library
+    end
+
+    def library_name(library)
+      Core::Util.class_to_lib_name(library[:base_class] || library[:base_path])
+    end
+
+    def list_files(options={})
+      lib = options[:lib] || library_name(default_library)
+      current_lib = libraries[lib]
+      path = `gem which -q #{lib}`.chomp
+      if path && !path.empty?
+        base_dir = File.join(File.dirname(path), current_lib[:base_path])
+        class_dir = options[:class] ? File.join(base_dir, options[:class]) : base_dir
+        Dir["#{class_dir}/**/*.rb"].map {|e| e.gsub(base_dir + "/", '') }
+      else
+        puts "No path found for '#{lib}'"
+      end
     end
     end
   end
