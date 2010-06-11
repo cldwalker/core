@@ -4,7 +4,6 @@ require 'context' #gem install jeremymcanally-context -s http://gems.github.com
 require 'matchy' #gem install jeremymcanally-matchy -s http://gems.github.com
 require 'mocha'
 #require 'pending' #gem install jeremymcanally-pending -s http://gems.github.com
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'core'
 
 class Test::Unit::TestCase
