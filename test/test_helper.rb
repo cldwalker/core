@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'bacon'
 require 'mocha-on-bacon'
 require 'mocha'
